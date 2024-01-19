@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
@@ -74,14 +75,16 @@ type Bot struct {
 	Poller  Poller
 	onError func(error, Context)
 
-	group       *Group
-	handlers    map[string]HandlerFunc
-	synchronous bool
-	verbose     bool
-	parseMode   ParseMode
-	stop        chan chan struct{}
-	client      *http.Client
-	stopClient  chan struct{}
+	nextUpdate            chan Update
+	shouldWrireNextUpdate int64
+	group                 *Group
+	handlers              map[string]HandlerFunc
+	synchronous           bool
+	verbose               bool
+	parseMode             ParseMode
+	stop                  chan chan struct{}
+	client                *http.Client
+	stopClient            chan struct{}
 }
 
 // Settings represents a utility struct for passing certain
@@ -216,6 +219,9 @@ func (b *Bot) Start() {
 		// handle incoming updates
 		case upd := <-b.Updates:
 			b.ProcessUpdate(upd)
+			if atomic.LoadInt64(&b.shouldWrireNextUpdate) == 1 {
+				b.nextUpdate <- upd
+			}
 			// call to stop polling
 		case confirm := <-b.stop:
 			close(stop)
@@ -223,6 +229,34 @@ func (b *Bot) Start() {
 			close(confirm)
 			b.stopClient = nil
 			return
+		}
+	}
+}
+
+func (b *Bot) NextUpdate(stop <-chan struct{}) *Update {
+	atomic.AddInt64(&b.shouldWrireNextUpdate, 1)
+	defer atomic.AddInt64(&b.shouldWrireNextUpdate, -1)
+
+	for {
+		select {
+		case <-stop:
+			return nil
+		case upd := <-b.nextUpdate:
+			return &upd
+		}
+	}
+}
+
+func (b *Bot) NextUpdateTimeout(timeout time.Duration) *Update {
+	atomic.AddInt64(&b.shouldWrireNextUpdate, 1)
+	defer atomic.AddInt64(&b.shouldWrireNextUpdate, -1)
+
+	for {
+		select {
+		case <-time.NewTimer(timeout).C:
+			return nil
+		case upd := <-b.nextUpdate:
+			return &upd
 		}
 	}
 }
