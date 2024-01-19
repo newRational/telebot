@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	tele "gopkg.in/telebot.v3"
+	tele "github.com/newRational/telebot"
 )
 
 var b, _ = tele.NewBot(tele.Settings{Offline: true})
