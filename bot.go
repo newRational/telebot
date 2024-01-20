@@ -42,9 +42,10 @@ func NewBot(pref Settings) (*Bot, error) {
 		Poller:  pref.Poller,
 		onError: pref.OnError,
 
-		Updates:  make(chan Update, pref.Updates),
-		handlers: make(map[string]HandlerFunc),
-		stop:     make(chan chan struct{}),
+		Updates:    make(chan Update, pref.Updates),
+		handlers:   make(map[string]HandlerFunc),
+		stop:       make(chan chan struct{}),
+		nextUpdate: make(chan Update, 1),
 
 		synchronous: pref.Synchronous,
 		verbose:     pref.Verbose,
@@ -219,9 +220,6 @@ func (b *Bot) Start() {
 		// handle incoming updates
 		case upd := <-b.Updates:
 			b.ProcessUpdate(upd)
-			if atomic.LoadInt64(&b.shouldWrireNextUpdate) == 1 {
-				b.nextUpdate <- upd
-			}
 			// call to stop polling
 		case confirm := <-b.stop:
 			close(stop)
