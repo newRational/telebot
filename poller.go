@@ -30,7 +30,7 @@ type LongPoller struct {
 	// you want your bot to receive.
 	//
 	// Possible values:
-	//		message
+	//
 	// 		edited_message
 	// 		channel_post
 	// 		edited_channel_post
@@ -43,6 +43,30 @@ type LongPoller struct {
 	// 		poll_answer
 	//
 	AllowedUpdates []string `yaml:"allowed_updates"`
+}
+
+type AllowedUpdates []string
+
+func DefaultAllowedUpdates() AllowedUpdates {
+	return AllowedUpdates(
+		[]string{
+			"edited_message",
+			"channel_post",
+			"edited_channel_post",
+			"inline_query",
+			"chosen_inline_result",
+			"callback_query",
+			"shipping_query",
+			"pre_checkout_query",
+			"poll",
+			"poll_answer",
+		},
+	)
+}
+
+func (u AllowedUpdates) Add(updates ...string) []string {
+	u = append(u, updates...)
+	return u
 }
 
 // Poll does long polling.
