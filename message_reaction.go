@@ -15,9 +15,3 @@ type MessageReaction struct {
 	OldReaction []ReactionType `json:"old_reaction"`
 	NewReaction []ReactionType `json:"new_reaction"`
 }
-
-func New(emoji string) ReactionType {
-	return ReactionType{
-		Emoji: emoji,
-	}
-}
