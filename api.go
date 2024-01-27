@@ -211,7 +211,7 @@ func (b *Bot) getMe() (*User, error) {
 	return resp.Result, nil
 }
 
-func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]Update, error) {
+func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed AllowedUpdates) ([]Update, error) {
 	params := map[string]string{
 		"offset":  strconv.Itoa(offset),
 		"timeout": strconv.Itoa(int(timeout / time.Second)),
