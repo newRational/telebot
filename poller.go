@@ -42,7 +42,7 @@ type LongPoller struct {
 	// 		poll
 	// 		poll_answer
 	//
-	AllowedUpdates []string `json:"allowed_updates"`
+	AllowedUpdates AllowedUpdates `json:"allowed_updates"`
 }
 
 type AllowedUpdates []string
