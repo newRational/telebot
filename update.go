@@ -7,6 +7,7 @@ type Update struct {
 	ID int `json:"update_id"`
 
 	Message           *Message          `json:"message,omitempty"`
+	MessageReaction   *MessageReaction  `json:"message_reaction"`
 	EditedMessage     *Message          `json:"edited_message,omitempty"`
 	ChannelPost       *Message          `json:"channel_post,omitempty"`
 	EditedChannelPost *Message          `json:"edited_channel_post,omitempty"`
