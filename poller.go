@@ -1,7 +1,6 @@
 package telebot
 
 import (
-	"bytes"
 	"encoding/json"
 	"sync/atomic"
 	"time"
@@ -62,6 +61,7 @@ func DefaultAllowedUpdates() AllowedUpdates {
 			"pre_checkout_query",
 			"poll",
 			"poll_answer",
+			"message_reaction",
 		},
 	)
 }
@@ -73,7 +73,6 @@ func (u AllowedUpdates) Add(updates ...string) AllowedUpdates {
 
 func (u AllowedUpdates) String() string {
 	b, _ := json.Marshal(u)
-	b = bytes.ReplaceAll(b, []byte("\\"), []byte(""))
 	return string(b)
 }
 
