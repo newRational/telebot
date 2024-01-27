@@ -66,7 +66,7 @@ func DefaultAllowedUpdates() AllowedUpdates {
 	)
 }
 
-func (u AllowedUpdates) Add(updates ...string) []string {
+func (u AllowedUpdates) Add(updates ...string) AllowedUpdates {
 	u = append(u, updates...)
 	return u
 }
