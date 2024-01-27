@@ -1,6 +1,8 @@
 package telebot
 
 import (
+	"bytes"
+	"encoding/json"
 	"sync/atomic"
 	"time"
 )
@@ -29,7 +31,7 @@ type LongPoller struct {
 	// AllowedUpdates contains the update types
 	// you want your bot to receive.
 	//
-	// Possible values:
+	// Default values:
 	//
 	// 		edited_message
 	// 		channel_post
@@ -42,7 +44,7 @@ type LongPoller struct {
 	// 		poll
 	// 		poll_answer
 	//
-	AllowedUpdates AllowedUpdates `json:"allowed_updates"`
+	AllowedUpdates string
 }
 
 type AllowedUpdates []string
@@ -67,6 +69,12 @@ func DefaultAllowedUpdates() AllowedUpdates {
 func (u AllowedUpdates) Add(updates ...string) []string {
 	u = append(u, updates...)
 	return u
+}
+
+func (u AllowedUpdates) String() string {
+	b, _ := json.Marshal(u)
+	b = bytes.ReplaceAll(b, []byte("\\"), []byte(""))
+	return string(b)
 }
 
 // Poll does long polling.
