@@ -28,6 +28,11 @@ type Update struct {
 func (b *Bot) ProcessUpdate(u Update) {
 	c := b.NewContext(u)
 
+	if u.MessageReaction != nil {
+		b.handle(u.MessageReaction.NewReaction[0].Emoji, c)
+		return
+	}
+
 	if u.Message != nil {
 		m := u.Message
 

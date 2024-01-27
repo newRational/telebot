@@ -87,3 +87,7 @@ func (t *Btn) CallbackUnique() string {
 	}
 	return t.Text
 }
+
+func (r *ReactionType) CallbackUnique() string {
+	return r.Emoji
+}
